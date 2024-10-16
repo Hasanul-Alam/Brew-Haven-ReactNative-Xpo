@@ -17,7 +17,7 @@ import {
 const Details = () => {
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-      <View className="bg-[#0C0F14] flex-1 pb-10">
+      <View className="bg-[#0C0F14] pb-10">
         <ImageBackground
           className="pt-16 min-h-[70%] cover"
           source={{ uri: "https://i.ibb.co.com/d085tCz/Details.png" }}
