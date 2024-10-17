@@ -4,6 +4,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
 import React from "react";
@@ -88,6 +89,14 @@ const Orders = () => {
                 </View>
               </View>
             </View>
+          </View>
+          {/* Order History Bottom Button */}
+          <View className="flex-1 justify-end mb-3 w-[85%] mx-auto">
+            <TouchableOpacity activeOpacity={0.8}>
+              <Text className="text-white bg-[#D17842] text-center text-xl py-2 rounded-xl">
+                Download
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
