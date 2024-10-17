@@ -28,7 +28,7 @@ const Cart = () => {
           </View>
         </View>
         {/* Cart Card */}
-        <View className="bg-[#262B33] mt-5 flex-row gap-x-2 py-3 px-1 rounded-xl w-full items-center">
+        <View className="bg-[#262B33] mt-5 flex-row gap-x-2 py-3 px-1 rounded-xl items-center">
           <Image
             className="w-[110px] h-[120px] rounded-xl"
             source={{ uri: "https://i.ibb.co.com/d085tCz/Details.png" }}
