@@ -7,6 +7,7 @@ const HomeLayout = () => {
     <Stack>
       <Stack.Screen name='(tabs)' options={{headerShown: false}} />
       <Stack.Screen name='details' options={{headerShown: false}} />
+      <Stack.Screen name='payment' options={{headerShown: false}} />
     </Stack>
   )
 }

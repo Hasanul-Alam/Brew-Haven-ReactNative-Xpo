@@ -117,7 +117,7 @@ const Home = () => {
                 <Octicons name="apps" color={"#ded9d9"} size={25} />
               </View>
             </View>
-            <View className="w-[40px] h-[40px]">
+            <View className="w-[35px] h-[35px]">
               <Image
                 className="w-full h-full rounded-xl"
                 source={{

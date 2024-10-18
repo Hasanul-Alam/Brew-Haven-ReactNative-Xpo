@@ -10,8 +10,12 @@ import {
 } from "react-native";
 import React from "react";
 import { AntDesign, Octicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 const Cart = () => {
+
+  const router = useRouter();
+
   return (
     <SafeAreaView className="bg-[#0C014]">
       <ScrollView>
@@ -106,6 +110,7 @@ const Cart = () => {
                 </View>
                 <View>
                   <TouchableOpacity
+                  onPress={() => router.push('/home/payment')}
                     activeOpacity={0.8}
                     className="bg-[#D17842] px-16 py-2 rounded-full"
                   >
