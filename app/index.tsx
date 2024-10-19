@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Redirect } from "expo-router";
 import { View, Text, ActivityIndicator } from "react-native";
+import LoadingSpinner from "./reusableComponents/LoadingSpinner";
 
 export default function Index() {
   const [isLoading, setIsLoading] = useState(true);
@@ -24,9 +25,10 @@ export default function Index() {
   return (
     <View className="flex-1 justify-center items-center bg-[#0C0F14]">
       {isLoading ? (
-        <View>
-          <ActivityIndicator size="large" color="#D17842" />
-        </View>
+        <LoadingSpinner />
+        // <View>
+        //   <ActivityIndicator size="large" color="#D17842" />
+        // </View>
       ) : isLoggedIn ? (
         // If the user is logged in, redirect to the home page
         <Redirect href="/home" />
@@ -37,18 +39,3 @@ export default function Index() {
     </View>
   );
 }
-
-// import { ScrollView, Text, View } from "react-native";
-// import Home from "./Home";
-// import Details from "./Details";
-// import Cart from "./Cart";
-// import Payment from "./Payment";
-// import Login from "./login";
-
-// export default function Index() {
-//   return (
-//     <View className="flex-1 bg-[#0C0F14] justify-center">
-//       <Login />
-//     </View>
-//   );
-// }
