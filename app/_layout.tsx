@@ -1,5 +1,6 @@
-import { Slot, Redirect, Stack } from 'expo-router';
-import React, { useState, useEffect } from 'react';
+import { Slot, Redirect, Stack } from "expo-router";
+import React, { useState, useEffect } from "react";
+import AuthProvider from "./providers/AuthProvider";
 
 export default function RootLayout() {
   const [isLoggedIn, setIsLoggedIn] = useState(true);
@@ -18,13 +19,14 @@ export default function RootLayout() {
   }
 
   return (
-        <Stack screenOptions={{headerShown: false}}>
-          <Stack.Screen name="index" options={{headerShown: false}}/>
-          <Stack.Screen name="home" options={{headerShown: false}}/>
-        </Stack>
-      );
+    <AuthProvider>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="home" options={{ headerShown: false }} />
+      </Stack>
+    </AuthProvider>
+  );
 }
-
 
 // import { Stack } from "expo-router";
 

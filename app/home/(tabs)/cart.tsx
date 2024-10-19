@@ -8,9 +8,10 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
+import React, { useContext } from "react";
 import { AntDesign, Octicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { AuthContext } from "@/app/providers/AuthProvider";
 
 const Cart = () => {
 
