@@ -22,9 +22,9 @@ export default function Index() {
   }, []);
 
   return (
-    <View>
+    <View className="flex-1 justify-center items-center bg-[#0C0F14]">
       {isLoading ? (
-        <View className="flex-1 justify-center items-center bg-[#0C0F14]">
+        <View>
           <ActivityIndicator size="large" color="#D17842" />
         </View>
       ) : isLoggedIn ? (
