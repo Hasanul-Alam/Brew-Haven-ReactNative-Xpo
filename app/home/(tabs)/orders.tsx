@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import React from "react";
 import { Octicons } from "@expo/vector-icons";
+import PageHeader from "@/app/reusableComponents/pageHeader";
 
 const Orders = () => {
   return (
@@ -17,7 +18,7 @@ const Orders = () => {
         <View className="bg-[#0C0F14] pt-12 pb-5 min-h-screen w-full flex-1">
           <View className="w-[85%] mx-auto">
             {/* Order History Header */}
-            <View className="my-5">
+            {/* <View className="my-5">
               <View className="flex-row justify-between items-center w-full mx-auto">
                 <View>
                   <View className="bg-[#21262E] px-2 py-1 rounded-lg">
@@ -38,7 +39,8 @@ const Orders = () => {
                   />
                 </View>
               </View>
-            </View>
+            </View> */}
+            <PageHeader headerTitle="Order History" imageUrl="https://i.ibb.co.com/jGMVDW2/coffee-shop.jpg" />
 
             {/* Order History Card */}
             <View className="card-container mb-5 border border-1 border-[#D17842] py-3 px-2 rounded-xl">

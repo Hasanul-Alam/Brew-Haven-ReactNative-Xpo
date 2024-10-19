@@ -11,6 +11,7 @@ import {
 import React, { useState } from "react";
 import { AntDesign, FontAwesome, Octicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import PageHeader from "@/app/reusableComponents/pageHeader";
 
 const Home = () => {
   const DATA = [
@@ -111,7 +112,7 @@ const Home = () => {
       <ScrollView className="mt-14">
         <View className="w-full">
           {/* Header Top */}
-          <View className="flex-row justify-between items-center w-[85%] mx-auto">
+          {/* <View className="flex-row justify-between items-center w-[85%] mx-auto">
             <View>
               <View className="bg-[#21262E] px-2 py-1 rounded-lg">
                 <Octicons name="apps" color={"#ded9d9"} size={25} />
@@ -125,7 +126,14 @@ const Home = () => {
                 }}
               />
             </View>
+          </View> */}
+          <View className="w-[85%] mx-auto">
+            <PageHeader
+              headerTitle=""
+              imageUrl="https://i.ibb.co.com/jGMVDW2/coffee-shop.jpg"
+            />
           </View>
+
           {/* Header Title */}
           <View className="w-[85%] mx-auto">
             <Text className="text-white text-4xl w-[80%] capitalize font-semibold my-10">

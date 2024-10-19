@@ -12,6 +12,7 @@ import React, { useContext } from "react";
 import { AntDesign, Octicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { AuthContext } from "@/app/providers/AuthProvider";
+import PageHeader from "@/app/reusableComponents/pageHeader";
 
 const Cart = () => {
 
@@ -23,7 +24,7 @@ const Cart = () => {
         <View className="bg-[#0C0F14] pt-12 pb-5 min-h-screen w-full flex-1">
           <View className="w-[85%] mx-auto">
             {/* Cart Header */}
-            <View className="my-5">
+            {/* <View className="my-5">
               <View className="flex-row justify-between items-center w-full mx-auto">
                 <View>
                   <View className="bg-[#21262E] px-2 py-1 rounded-lg">
@@ -44,7 +45,8 @@ const Cart = () => {
                   />
                 </View>
               </View>
-            </View>
+            </View> */}
+            <PageHeader headerTitle="Cart" imageUrl="https://i.ibb.co.com/jGMVDW2/coffee-shop.jpg" />
 
             {/* Cart Card */}
             <View className="bg-[#262B33] mt-5 flex-row gap-x-2 py-3 px-1 rounded-xl items-center">
