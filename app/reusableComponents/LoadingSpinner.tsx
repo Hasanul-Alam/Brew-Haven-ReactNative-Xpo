@@ -44,7 +44,7 @@ const LoadingSpinner = () => {
               style={{
                 width: 12,
                 height: height,
-                backgroundColor: '#3498db',
+                backgroundColor: '#D17842',
               }}
             />
           );

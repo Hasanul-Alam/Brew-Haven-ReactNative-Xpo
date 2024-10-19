@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import { AuthContext } from "../providers/AuthProvider";
 import { UserCredential } from "firebase/auth";
 import LoadingSpinner from "../reusableComponents/LoadingSpinner";
+import LoginSignUpButton from "../reusableComponents/LoginSignUpButton";
 
 export default function Login() {
   const { user, setUser, login } = useContext(AuthContext);
@@ -64,14 +65,8 @@ export default function Login() {
             value={password}
           />
 
-          <TouchableOpacity
-            onPress={handleLogin}
-            className="bg-[#D17842] py-4 rounded-lg mt-6"
-          >
-            <Text className="text-white text-center text-lg font-semibold">
-              Login
-            </Text>
-          </TouchableOpacity>
+          {/* Login Button */}
+          <LoginSignUpButton buttonTitle={'Login'} onPressFunction={handleLogin} />
 
           <View className="flex-row justify-center mt-4">
             <Text className="text-[#AEAEAE] text-sm">
