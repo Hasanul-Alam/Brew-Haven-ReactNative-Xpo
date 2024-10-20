@@ -12,7 +12,7 @@ import React, { useContext } from "react";
 import { AntDesign, Octicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { AuthContext } from "@/app/providers/AuthProvider";
-import PageHeader from "@/app/reusableComponents/pageHeader";
+import PageHeader from "@/app/reusableComponents/PageHeader";
 
 const Cart = () => {
 

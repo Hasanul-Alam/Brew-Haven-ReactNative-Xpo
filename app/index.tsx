@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Redirect } from "expo-router";
 import { View, Text, ActivityIndicator } from "react-native";
 import LoadingSpinner from "./reusableComponents/LoadingSpinner";
+import LoadingProducts from "./reusableComponents/LoadingProducts";
 
 export default function Index() {
   const [isLoading, setIsLoading] = useState(true);

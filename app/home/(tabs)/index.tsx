@@ -8,12 +8,47 @@ import {
   TextInput,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AntDesign, FontAwesome, Octicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import PageHeader from "@/app/reusableComponents/pageHeader";
+import PageHeader from "@/app/reusableComponents/PageHeader";
+import axios from "axios";
+import LoadingProducts from "@/app/reusableComponents/LoadingProducts";
 
 const Home = () => {
+  const [coffeeData, setCoffeeData] = useState([]);
+  const [coffeeBeanData, setCoffeeBeanData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async (productType: string) => {
+      const url = `http://192.168.1.6:3000/${
+        productType === "coffee" ? "all-coffee" : "all-coffee-bean"
+      }`;
+      try {
+        const response = await axios.get(url);
+        if (productType === "coffee") {
+          setCoffeeData(response.data);
+        } else {
+          setCoffeeBeanData(response.data);
+        }
+      } catch (err) {
+        // Assert error type
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("An unknown error occurred");
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData("coffee");
+    fetchData("coffee-bean");
+  }, []);
+
   const DATA = [
     {
       id: "1",
@@ -68,9 +103,10 @@ const Home = () => {
 
   // Define Types of Each Item.
   interface Item {
-    id: string;
+    _id: string;
+    name: string;
     title: string;
-    image: string;
+    imageUrl: string;
     description: string;
     price: number;
   }
@@ -78,26 +114,36 @@ const Home = () => {
   // Render Item
   const renderItem = ({ item }: { item: Item }) => (
     <View className="bg-[#252A32] rounded-lg p-3 mx-3 mb-5">
-      <Image
-        source={{ uri: item.image }}
-        className="w-[100px] h-[100px] rounded-lg"
-      />
-      <Text className="color-white mt-3 uppercase font-semibold">
-        {item.title}
-      </Text>
-      <Text className="text-white text-xs">{item.description}</Text>
-      <View className="flex-row justify-between items-center mt-3">
-        <Text className="text-white text-lg font-semibold">
-          <Text className="text-[#D17842]">$ </Text>
-          {item.price}
-        </Text>
-        <Text
-          onPress={navigateToDetais}
-          className="bg-[#D17842] p-1 rounded text-white"
-        >
-          <AntDesign name="plus" />
-        </Text>
-      </View>
+      {loading ? (
+        <LoadingProducts />
+      ) : (
+        <View>
+          <Image
+            source={{ uri: item.imageUrl }}
+            className="w-[100px] h-[100px] rounded-lg"
+          />
+          <Text className="color-white mt-3 uppercase font-semibold">
+            {item.name.length > 14 ? item.name.slice(0, 10) + "..." : item.name}
+          </Text>
+          <Text className="text-white text-xs">
+            {item.title.length > 14
+              ? item.title.slice(0, 10) + "..."
+              : item.title}
+          </Text>
+          <View className="flex-row justify-between items-center mt-3">
+            <Text className="text-white text-lg font-semibold">
+              <Text className="text-[#D17842]">$ </Text>
+              {item.price}
+            </Text>
+            <Text
+              onPress={navigateToDetais}
+              className="bg-[#D17842] p-1 rounded text-white"
+            >
+              <AntDesign name="plus" />
+            </Text>
+          </View>
+        </View>
+      )}
     </View>
   );
 
@@ -108,7 +154,7 @@ const Home = () => {
   };
 
   return (
-    <SafeAreaView className="bg-[#0C0F14] w-full mx-auto">
+    <SafeAreaView className="bg-[#0C0F14] w-full mx-auto min-h-screen">
       <ScrollView className="mt-14">
         <View className="w-full">
           {/* Header Top */}
@@ -159,13 +205,17 @@ const Home = () => {
               <Text className="text-white ml-3 my-3 text-2xl font-semibold">
                 Coffee
               </Text>
-              <FlatList
-                data={DATA} // Data source for the FlatList
-                renderItem={renderItem} // Function to render each item
-                keyExtractor={(item) => item.id} // Unique key for each item
-                horizontal // Set the FlatList to be horizontal
-                showsHorizontalScrollIndicator={true} // Show horizontal scroll indicator
-              />
+              {loading ? (
+                <LoadingProducts />
+              ) : (
+                <FlatList
+                  data={coffeeData}
+                  renderItem={renderItem}
+                  keyExtractor={(item) => item._id}
+                  horizontal
+                  showsHorizontalScrollIndicator={true}
+                />
+              )}
             </View>
           </View>
 
@@ -175,13 +225,17 @@ const Home = () => {
               <Text className="text-white ml-3 mb-3 text-2xl font-semibold">
                 Coffee Beans
               </Text>
-              <FlatList
-                data={DATA} // Data source for the FlatList
-                renderItem={renderItem} // Function to render each item
-                keyExtractor={(item) => item.id} // Unique key for each item
-                horizontal // Set the FlatList to be horizontal
-                showsHorizontalScrollIndicator={true} // Show horizontal scroll indicator
-              />
+              {loading ? (
+                <LoadingProducts />
+              ) : (
+                <FlatList
+                  data={coffeeBeanData}
+                  renderItem={renderItem}
+                  keyExtractor={(item) => item._id}
+                  horizontal
+                  showsHorizontalScrollIndicator={true}
+                />
+              )}
             </View>
           </View>
         </View>

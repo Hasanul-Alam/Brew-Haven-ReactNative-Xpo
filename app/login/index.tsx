@@ -15,25 +15,26 @@ export default function Login() {
   const router = useRouter();
 
   const handleLogin = async () => {
-    setLoading(true);
-    try {
-      // Type userCredential as UserCredential
-      const userCredential: UserCredential = await login(email, password);
+    // setLoading(true);
+    // try {
+    //   // Type userCredential as UserCredential
+    //   const userCredential: UserCredential = await login(email, password);
 
-      if (userCredential?.user) {
-        setUser(userCredential.user);
-        setLoading(false);
-        console.log("User credential:", userCredential);
+    //   if (userCredential?.user) {
+    //     setUser(userCredential.user);
+    //     setLoading(false);
+    //     console.log("User credential:", userCredential);
 
-        // Redirect to the homepage after successful signup
-        router.replace("/home");
-      }
-    } catch (error: any) {
-      // Add 'any' type to error for proper typing
-      setError?.(error.message);
-      setLoading(false);
-      console.log("Error during signup:", error.code, error.message);
-    }
+    //     // Redirect to the homepage after successful signup
+    //     router.replace("/home");
+    //   }
+    // } catch (error: any) {
+    //   // Add 'any' type to error for proper typing
+    //   setError?.(error.message);
+    //   setLoading(false);
+    //   console.log("Error during signup:", error.code, error.message);
+    // }
+    router.replace("/home");
   };
 
   return (

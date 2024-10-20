@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import React from "react";
 import { Octicons } from "@expo/vector-icons";
-import PageHeader from "@/app/reusableComponents/pageHeader";
+import PageHeader from "@/app/reusableComponents/PageHeader";
 
 const Orders = () => {
   return (

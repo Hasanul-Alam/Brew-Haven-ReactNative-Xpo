@@ -15,7 +15,7 @@ import {
   MaterialIcons,
   Octicons,
 } from "@expo/vector-icons";
-import PageHeader from "@/app/reusableComponents/pageHeader";
+import PageHeader from "@/app/reusableComponents/PageHeader";
 
 const Favourites = () => {
   return (
