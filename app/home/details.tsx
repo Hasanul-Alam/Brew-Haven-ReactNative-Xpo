@@ -1,4 +1,4 @@
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import {
   Image,
   ImageBackground,
@@ -8,26 +8,78 @@ import {
   Text,
   View,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   AntDesign,
   Feather,
   Ionicons,
   MaterialIcons,
 } from "@expo/vector-icons";
+import axios from "axios";
 
 const Details = () => {
+  // States
+  const [productDetails, setProductDetails] = useState<ProductDetails | null>(
+    null
+  );
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async (productCategory: string, productId: string) => {
+      const url = `http://192.168.1.6:3000/${
+        productCategory === "Beverages"
+          ? `all-coffee/${productId}`
+          : `all-coffee-bean/${productId}`
+      }`;
+      try {
+        const response = await axios.get(url);
+        setProductDetails(response.data);
+      } catch (err) {
+        // Assert error type
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("An unknown error occurred");
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData(category as string, id as string);
+  }, []);
+
   const router = useRouter();
   const handleBack = () => {
     router.back();
   };
+
+  // Receive productId and category
+  const params = useLocalSearchParams();
+  const id = params.productId;
+  const category = params.category;
+
+  // Interface for typescript
+  interface ProductDetails {
+    description: string;
+    name: string;
+    category: string;
+    imageUrl: string;
+    rating: number;
+    ratingCount: number;
+    ratingsCount: number;
+    price: number;
+    title: string;
+    favourite: boolean;
+  }
+
   return (
     <SafeAreaView className="flex-1 bg-[#0C0F14] min-h-screen">
       <ScrollView>
         <View className="bg-[#0C0F14]">
           <ImageBackground
             className="pt-16 h-[500px] cover"
-            source={{ uri: "https://i.ibb.co.com/d085tCz/Details.png" }}
+            source={{ uri: `${productDetails?.imageUrl}` }}
           >
             <View className="flex-1 justify-between">
               {/* Back and favorite icons */}
@@ -40,7 +92,11 @@ const Details = () => {
                     <Ionicons name="chevron-back" size={25} />
                   </Text>
                   <Text className="text-white bg-[#21262E] p-1 rounded-lg">
-                    <MaterialIcons name="favorite-border" size={25} />
+                    <MaterialIcons
+                      name="favorite"
+                      size={25}
+                      color={productDetails?.favourite ? "#DC3535" : "#FFFFFF"}
+                    />
                   </Text>
                 </View>
               </View>
@@ -50,11 +106,11 @@ const Details = () => {
                   {/* Coffee name, title, and icons */}
                   <View className="flex-row items-center justify-between">
                     <View>
-                      <Text className="text-white text-3xl font-[600]">
-                        Cappuccino
+                      <Text className="text-white text-2xl font-[600]">
+                        {productDetails?.name}
                       </Text>
                       <Text className="text-white capitalize]">
-                        With Steamed Milk
+                        {productDetails?.category}
                       </Text>
                     </View>
                     <View className="flex-row gap-2 items-center">
@@ -75,13 +131,19 @@ const Details = () => {
                     <View className="flex-row gap-2 items-center">
                       <AntDesign name="star" color={"#D17842"} size={25} />
                       <Text className="text-white text-lg font-semibold">
-                        4.5
+                        {productDetails?.rating}
                       </Text>
-                      <Text className="text-white text-xs">(6,879)</Text>
+                      <Text className="text-white text-xs">
+                        (
+                        {productDetails?.ratingCount
+                          ? productDetails?.ratingCount
+                          : productDetails?.ratingsCount}
+                        )
+                      </Text>
                     </View>
                     <View>
                       <Text className="color-white bg-black text-sm px-3 py-1 rounded-lg">
-                        Medium Roasted
+                        {productDetails?.title?.slice(0, 14)}
                       </Text>
                     </View>
                   </View>
@@ -94,11 +156,10 @@ const Details = () => {
             {/* Description */}
             <View>
               <Text className="text-[#AEAEAE] text-xl font-semibold">
-                Description
+                Details
               </Text>
               <Text className="text-[#AEAEAE] mt-2 leading-loose">
-                Cappuccino is a latte made with more foam than steamed milk,
-                often with a sprinkle of cocoa powder or cinnamon on top.
+                {productDetails?.description}
               </Text>
             </View>
 
@@ -123,7 +184,8 @@ const Details = () => {
               <View>
                 <Text className="text-[#AEAEAE] font-semibold">Price</Text>
                 <Text className="text-[#FFFFFF] font-semibold text-xl">
-                  <Text className="text-[#D17842]">$ </Text>4.20
+                  <Text className="text-[#D17842]">$ </Text>
+                  {productDetails?.price}
                 </Text>
               </View>
               <View>

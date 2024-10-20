@@ -109,6 +109,7 @@ const Home = () => {
     imageUrl: string;
     description: string;
     price: number;
+    category: string;
   }
 
   // Render Item
@@ -136,7 +137,7 @@ const Home = () => {
               {item.price}
             </Text>
             <Text
-              onPress={navigateToDetais}
+              onPress={() => navigateToDetais(item._id, item.category)}
               className="bg-[#D17842] p-1 rounded text-white"
             >
               <AntDesign name="plus" />
@@ -149,8 +150,11 @@ const Home = () => {
 
   const router = useRouter();
 
-  const navigateToDetais = () => {
-    router.push("/home/details");
+  // Navigation function with id and category.
+  const navigateToDetais = (productId: string, productCategory: string) => {
+    router.push(
+      `/home/details?productId=${productId}&category=${productCategory}`
+    );
   };
 
   return (

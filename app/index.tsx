@@ -27,9 +27,6 @@ export default function Index() {
     <View className="flex-1 justify-center items-center bg-[#0C0F14]">
       {isLoading ? (
         <LoadingSpinner />
-        // <View>
-        //   <ActivityIndicator size="large" color="#D17842" />
-        // </View>
       ) : isLoggedIn ? (
         // If the user is logged in, redirect to the home page
         <Redirect href="/home" />
