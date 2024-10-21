@@ -5,6 +5,7 @@ import { AuthContext } from "../providers/AuthProvider";
 import { UserCredential } from "firebase/auth";
 import LoadingSpinner from "../reusableComponents/LoadingSpinner";
 import LoginSignUpButton from "../reusableComponents/LoginSignUpButton";
+import useAsyncStorage from "../hooks/useAsyncStorage";
 
 export default function SignUp() {
   const [name, setName] = useState("");
@@ -12,6 +13,7 @@ export default function SignUp() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { saveData } = useAsyncStorage("user");
   const { signup, setUser, setError } = useContext(AuthContext);
 
   const handleSignUp = async () => {
@@ -21,11 +23,15 @@ export default function SignUp() {
       const userCredential: UserCredential = await signup(email, password);
 
       if (userCredential?.user) {
-        setUser(userCredential.user);
-        setLoading(false); // userCredential.user now exists with proper type
-        console.log("User credential:", userCredential);
-        // Redirect to the homepage after successful signup
-        router.replace("/home");
+        setUser(userCredential.user); // Set user data to state
+
+        saveData({email: userCredential.user.email, uid: userCredential.user.uid}); // Set user data to local storage
+
+        setLoading(false); // Set Loading state
+
+        router.replace("/home"); // Redirect to the homepage after successful signup
+
+        console.log(userCredential.user.email, userCredential.user.uid);
       }
     } catch (error: any) {
       // Add 'any' type to error for proper typing
@@ -33,9 +39,6 @@ export default function SignUp() {
       setLoading(false);
       console.log("Error during signup:", error.code, error.message);
     }
-
-    // Logging form input data (for debugging purposes)
-    console.log("Name: ", name, "Email: ", email, "Password: ", password);
   };
 
   return (
@@ -77,7 +80,10 @@ export default function SignUp() {
           />
 
           {/* SignUp Button */}
-          <LoginSignUpButton buttonTitle="Sign Up" onPressFunction={handleSignUp} />
+          <LoginSignUpButton
+            buttonTitle="Sign Up"
+            onPressFunction={handleSignUp}
+          />
 
           <View className="flex-row justify-center mt-4">
             <Text className="text-[#AEAEAE] text-sm">

@@ -1,41 +1,58 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import { AuthContext } from "../providers/AuthProvider";
 import { UserCredential } from "firebase/auth";
 import LoadingSpinner from "../reusableComponents/LoadingSpinner";
 import LoginSignUpButton from "../reusableComponents/LoginSignUpButton";
+import useAsyncStorage from "../hooks/useAsyncStorage";
+// import AsyncStorage, { useAsyncStorage } from "@react-native-async-storage/async-storage";
 
 export default function Login() {
-  const { user, setUser, login } = useContext(AuthContext);
+  const { setUser, login } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const { loadData } = useAsyncStorage("user");
   const router = useRouter();
 
   const handleLogin = async () => {
-    // setLoading(true);
-    // try {
-    //   // Type userCredential as UserCredential
-    //   const userCredential: UserCredential = await login(email, password);
+    setLoading(true);
+    try {
+      // Type userCredential as UserCredential
+      const userCredential: UserCredential = await login(email, password);
 
-    //   if (userCredential?.user) {
-    //     setUser(userCredential.user);
-    //     setLoading(false);
-    //     console.log("User credential:", userCredential);
+      if (userCredential?.user) {
+        setUser(userCredential.user);
+        setLoading(false);
 
-    //     // Redirect to the homepage after successful signup
-    //     router.replace("/home");
-    //   }
-    // } catch (error: any) {
-    //   // Add 'any' type to error for proper typing
-    //   setError?.(error.message);
-    //   setLoading(false);
-    //   console.log("Error during signup:", error.code, error.message);
-    // }
-    router.replace("/home");
+        // Redirect to the homepage after successfuly signup
+        router.replace("/home");
+      }
+    } catch (error: any) {
+      // Add 'any' type to error for proper typing
+      setError?.(error.message);
+      setLoading(false);
+      console.log("Error during signup:", error.code, error.message);
+    }
   };
+
+  // Fetch Data From Async Storage.
+  const fetchDataFromStorage = async () => {
+    try {
+      const dataFromStorage = await loadData();
+      if (dataFromStorage.email) {
+        router.push("/home");
+      }
+    } catch (error) {
+      setError("Session Out Please Login");
+    }
+  };
+
+  useEffect(() => {
+    fetchDataFromStorage();
+  }, []);
 
   return (
     <View className="flex-1 bg-[#0C0F14] justify-center px-6">
@@ -67,7 +84,10 @@ export default function Login() {
           />
 
           {/* Login Button */}
-          <LoginSignUpButton buttonTitle={'Login'} onPressFunction={handleLogin} />
+          <LoginSignUpButton
+            buttonTitle={"Login"}
+            onPressFunction={handleLogin}
+          />
 
           <View className="flex-row justify-center mt-4">
             <Text className="text-[#AEAEAE] text-sm">
