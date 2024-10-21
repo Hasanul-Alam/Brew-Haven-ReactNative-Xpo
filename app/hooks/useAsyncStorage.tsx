@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState } from "react";
+import { Alert } from "react-native";
 
 const useAsyncStorage = (
   key: string,
@@ -55,9 +56,20 @@ const useAsyncStorage = (
     }
   };
 
+  // Function to clear all AsyncStorage data
+  const clearStorage = async () => {
+    try {
+      await AsyncStorage.clear();
+      Alert.alert('Storage Cleared', 'All data has been cleared from AsyncStorage.');
+    } catch (error) {
+      console.error('Error clearing storage:', error);
+    }
+  };
+
   return {
     saveData,
     loadData,
+    clearStorage,
     loading,
     error,
     storedData,

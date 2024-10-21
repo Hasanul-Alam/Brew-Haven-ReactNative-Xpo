@@ -14,7 +14,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { loadData } = useAsyncStorage("user");
+  const { loadData, clearStorage } = useAsyncStorage("user");
   const router = useRouter();
 
   const handleLogin = async () => {

@@ -1,11 +1,20 @@
 import React, { useContext, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Button,
+  Alert,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { AuthContext } from "../providers/AuthProvider";
 import { UserCredential } from "firebase/auth";
 import LoadingSpinner from "../reusableComponents/LoadingSpinner";
 import LoginSignUpButton from "../reusableComponents/LoginSignUpButton";
 import useAsyncStorage from "../hooks/useAsyncStorage";
+import * as ImagePicker from "expo-image-picker";
+import axios from "axios";
 
 export default function SignUp() {
   const [name, setName] = useState("");
@@ -15,8 +24,11 @@ export default function SignUp() {
   const router = useRouter();
   const { saveData } = useAsyncStorage("user");
   const { signup, setUser, setError } = useContext(AuthContext);
+  const [image, setImage] = useState<string | null>(null);
+  const [uploading, setUploading] = useState<boolean>(false);
+  const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);
 
-  const handleSignUp = async () => {
+  /* const handleSignUp = async () => {
     setLoading(true);
     try {
       // Type userCredential as UserCredential
@@ -38,6 +50,63 @@ export default function SignUp() {
       setError?.(error.message);
       setLoading(false);
       console.log("Error during signup:", error.code, error.message);
+    }
+  }; */
+
+  const handleSignUp = () => {
+    console.log(name, email, password);
+  };
+
+  const API_KEY = "a034eb9194a3961792dc743224e30bd2";
+
+  const pickImage = async () => {
+    const permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (permissionResult.granted) {
+      console.log("permission is granted");
+
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+        base64: true, // Get the base64 string
+      });
+
+      if (!result.canceled) {
+        setImage(result.assets[0].uri);
+        uploadImage(result.assets[0].base64);
+      }
+
+      // console.log(result.assets[0].base64);
+    } else {
+      alert("Permission is not granted");
+    }
+  };
+
+  const uploadImage = async (base64: any) => {
+    setUploading(true);
+    const url = `https://api.imgbb.com/1/upload?key=${API_KEY}`;
+
+    const formData = new FormData();
+    formData.append('image', base64);
+
+    try {
+      const response = await axios.post(url, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      if (response.data && response.data.success) {
+        setUploadSuccess(response.data.data.url);  // Get the image URL from ImgBB
+        alert('Image uploaded successfully');
+        console.log(response.data.data.url)
+      }
+    } catch (error) {
+      alert('Image upload failed, please try again.');
+      console.error(error);
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -78,6 +147,9 @@ export default function SignUp() {
             onChangeText={setPassword}
             value={password}
           />
+
+          {/* Image Picker Button */}
+          <Button title="Pick an image from camera roll" onPress={pickImage} />
 
           {/* SignUp Button */}
           <LoginSignUpButton

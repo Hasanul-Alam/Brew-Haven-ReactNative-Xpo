@@ -6,6 +6,7 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut,
+  updateProfile,
   UserCredential,
 } from "firebase/auth";
 import { app } from "../firebase/firebase.config";
@@ -21,6 +22,7 @@ interface AuthContextType {
   user: User | {};
   login: (email: string, password: string) => Promise<UserCredential>;
   signup: (email: string, password: string) => Promise<UserCredential>;
+  updateUserProfile: (name: string, photoUrl: string) => Promise<void>;
   logout: () => Promise<void>;
   setUser: (user: User | {}) => void;
   error: string;
@@ -35,6 +37,9 @@ export const AuthContext = createContext<AuthContextType>({
     return Promise.reject("login function not implemented");
   },
   signup: async () => {
+    return Promise.reject("signup function not implemented");
+  },
+  updateUserProfile: async () => {
     return Promise.reject("signup function not implemented");
   },
   logout: async () => {
@@ -74,6 +79,18 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     return createUserWithEmailAndPassword(auth, email, password);
   };
 
+  const updateUserProfile = (name: string, photoUrl: string) => {
+    if (auth.currentUser) {
+      return updateProfile(auth.currentUser, {
+        displayName: name,
+        photoURL: photoUrl
+      });
+    } else {
+      console.error("User is not logged in.");
+      return Promise.reject(new Error("User is not logged in"));
+    }
+  };
+
   const logout = () => {
     return signOut(auth);
   };
@@ -82,7 +99,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, login, signup, logout, setUser, error, setError }}
+      value={{ user, login, signup, logout, setUser, error, setError, updateUserProfile }}
     >
       {children}
     </AuthContext.Provider>
