@@ -1,6 +1,7 @@
 import {
   FlatList,
   Image,
+  Pressable,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -9,7 +10,7 @@ import {
   View,
 } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
-import { AntDesign, FontAwesome, Octicons } from "@expo/vector-icons";
+import { AntDesign, Feather, FontAwesome, MaterialCommunityIcons, Octicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import PageHeader from "@/app/reusableComponents/PageHeader";
 import axios from "axios";
@@ -66,37 +67,40 @@ const Home = () => {
   }
 
   // Render Item
-  const renderItem = ({ item }: { item: Item }) => (
+  const renderItem = ({ item }: { item: Item }, extraParam: string) => (
     <View className="bg-[#252A32] rounded-lg p-3 mx-3 mb-5">
       {loading ? (
         <LoadingProducts />
       ) : (
-        <View>
-          <Image
-            source={{ uri: item.imageUrl }}
-            className="w-[100px] h-[100px] rounded-lg"
-          />
-          <Text className="color-white mt-3 uppercase font-semibold">
-            {item.name.length > 14 ? item.name.slice(0, 10) + "..." : item.name}
-          </Text>
-          <Text className="text-white text-xs">
-            {item.title.length > 14
-              ? item.title.slice(0, 10) + "..."
-              : item.title}
-          </Text>
-          <View className="flex-row justify-between items-center mt-3">
-            <Text className="text-white text-lg font-semibold">
-              <Text className="text-[#D17842]">$ </Text>
-              {item.price}
+        <Pressable onPress={() => navigateToDetais(item._id, item.category)}>
+          <View>
+            <Image
+              source={{ uri: item.imageUrl }}
+              className="w-[100px] h-[100px] rounded-lg"
+            />
+            <Text className="color-white mt-3 uppercase font-semibold">
+              {item.name.length > 14
+                ? item.name.slice(0, 10) + "..."
+                : item.name}
             </Text>
-            <Text
-              onPress={() => navigateToDetais(item._id, item.category)}
-              className="bg-[#D17842] p-1 rounded text-white"
-            >
-              <AntDesign name="plus" />
+            <Text className="text-white text-xs">
+              {item.title.length > 14
+                ? item.title.slice(0, 10) + "..."
+                : item.title}
             </Text>
+            <View className="flex-row justify-between items-center mt-3">
+              <Text className="text-white text-lg font-semibold">
+                <Text className="text-[#D17842]">$ </Text>
+                {item.price}
+              </Text>
+              <Text className="bg-[#D17842] p-1 rounded text-white">
+                {
+                  extraParam === 'coffee' ? <Feather name="coffee" size={15} /> : <MaterialCommunityIcons name="coffee-maker-outline" size={15} />
+                }
+              </Text>
+            </View>
           </View>
-        </View>
+        </Pressable>
       )}
     </View>
   );
@@ -166,8 +170,10 @@ const Home = () => {
                 <LoadingProducts />
               ) : (
                 <FlatList
-                  data={coffeeData}
-                  renderItem={renderItem}
+                  data={coffeeData as any[]}
+                  renderItem={({ item }) =>
+                    renderItem({ item }, "coffee")
+                  }
                   keyExtractor={(item) => item._id}
                   horizontal
                   showsHorizontalScrollIndicator={true}
@@ -186,8 +192,10 @@ const Home = () => {
                 <LoadingProducts />
               ) : (
                 <FlatList
-                  data={coffeeBeanData}
-                  renderItem={renderItem}
+                  data={coffeeBeanData as any[]}
+                  renderItem={({ item }) =>
+                    renderItem({ item }, "coffee-bean")
+                  }
                   keyExtractor={(item) => item._id}
                   horizontal
                   showsHorizontalScrollIndicator={true}
