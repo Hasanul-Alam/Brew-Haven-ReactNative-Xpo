@@ -44,6 +44,7 @@ export default function Login() {
       const dataFromStorage = await loadData();
       if (dataFromStorage.email) {
         router.push("/home");
+        setUser(dataFromStorage);
       }
     } catch (error) {
       setError("Session Out Please Login");

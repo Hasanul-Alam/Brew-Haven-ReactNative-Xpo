@@ -1,12 +1,17 @@
 import { Image, StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useContext } from "react";
 import { Octicons } from "@expo/vector-icons";
+import { AuthContext } from "../providers/AuthProvider";
 type PageHeaderProps = {
   headerTitle: string;
   imageUrl: string;
 };
 
 const PageHeader = ({ headerTitle, imageUrl }: PageHeaderProps) => {
+  const { user } = useContext(AuthContext);
+  interface User {
+    photoURL?: string; // photoURL might be undefined
+  }
   return (
     <View className="my-5">
       <View className="flex-row justify-between items-center w-full mx-auto">
@@ -16,13 +21,15 @@ const PageHeader = ({ headerTitle, imageUrl }: PageHeaderProps) => {
           </View>
         </View>
         <View>
-          <Text className="text-2xl text-white font-semibold">{headerTitle}</Text>
+          <Text className="text-2xl text-white font-semibold">
+            {headerTitle}
+          </Text>
         </View>
         <View className="w-[35px] h-[35px]">
           <Image
             className="w-full h-full rounded-xl"
             source={{
-              uri: `${imageUrl}`,
+              uri: (user as User)?.photoURL || '',
             }}
           />
         </View>

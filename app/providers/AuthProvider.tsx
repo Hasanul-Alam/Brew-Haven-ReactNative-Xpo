@@ -16,6 +16,7 @@ interface User {
   uid: string;
   email: string;
   displayName?: string;
+  photoURL?: any;
 }
 
 interface AuthContextType {
@@ -83,7 +84,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     if (auth.currentUser) {
       return updateProfile(auth.currentUser, {
         displayName: name,
-        photoURL: photoUrl
+        photoURL: photoUrl,
       });
     } else {
       console.error("User is not logged in.");
@@ -99,7 +100,16 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, login, signup, logout, setUser, error, setError, updateUserProfile }}
+      value={{
+        user,
+        login,
+        signup,
+        logout,
+        setUser,
+        error,
+        setError,
+        updateUserProfile,
+      }}
     >
       {children}
     </AuthContext.Provider>

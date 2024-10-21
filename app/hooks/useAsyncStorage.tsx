@@ -54,6 +54,7 @@ const useAsyncStorage = (
     } finally {
       setLoading(false);
     }
+    // clearStorage();
   };
 
   // Function to clear all AsyncStorage data

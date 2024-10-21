@@ -8,18 +8,22 @@ import {
   TextInput,
   View,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { AntDesign, FontAwesome, Octicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import PageHeader from "@/app/reusableComponents/PageHeader";
 import axios from "axios";
 import LoadingProducts from "@/app/reusableComponents/LoadingProducts";
+import { AuthContext } from "@/app/providers/AuthProvider";
+import useAsyncStorage from "@/app/hooks/useAsyncStorage";
 
 const Home = () => {
   const [coffeeData, setCoffeeData] = useState([]);
   const [coffeeBeanData, setCoffeeBeanData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { user, setUser } = useContext(AuthContext);
+  const { loadData } = useAsyncStorage("user");
 
   useEffect(() => {
     const fetchData = async (productType: string) => {
@@ -42,64 +46,13 @@ const Home = () => {
         }
       } finally {
         setLoading(false);
+        console.log(user);
       }
     };
 
     fetchData("coffee");
     fetchData("coffee-bean");
   }, []);
-
-  const DATA = [
-    {
-      id: "1",
-      title: "cappuccino",
-      image: "https://i.ibb.co.com/MVfx4QJ/Group-10.png",
-      description: "with steamed milk",
-      price: 4.2,
-    },
-    {
-      id: "2",
-      title: "cappuccino",
-      image: "https://i.ibb.co.com/MVfx4QJ/Group-10.png",
-      description: "with steamed milk",
-      price: 4.2,
-    },
-    {
-      id: "3",
-      title: "cappuccino",
-      image: "https://i.ibb.co.com/MVfx4QJ/Group-10.png",
-      description: "with steamed milk",
-      price: 4.2,
-    },
-    {
-      id: "4",
-      title: "cappuccino",
-      image: "https://i.ibb.co.com/MVfx4QJ/Group-10.png",
-      description: "with steamed milk",
-      price: 4.2,
-    },
-    {
-      id: "5",
-      title: "cappuccino",
-      image: "https://i.ibb.co.com/MVfx4QJ/Group-10.png",
-      description: "with steamed milk",
-      price: 4.2,
-    },
-    {
-      id: "6",
-      title: "cappuccino",
-      image: "https://i.ibb.co.com/MVfx4QJ/Group-10.png",
-      description: "with steamed milk",
-      price: 4.2,
-    },
-    {
-      id: "7",
-      title: "cappuccino",
-      image: "https://i.ibb.co.com/MVfx4QJ/Group-10.png",
-      description: "with steamed milk",
-      price: 4.2,
-    },
-  ];
 
   // Define Types of Each Item.
   interface Item {
