@@ -6,9 +6,10 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   AntDesign,
   Feather,
@@ -24,40 +25,56 @@ const Details = () => {
   );
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [selectedSize, setSelectedSize] = useState<string | null>("S");
+  const [selectedPrice, setSelectedPrice] = useState(1);
+  const [productId, setProductId] = useState<string | null>(null);
+  const [productCategory, setProductCategory] = useState<string | null>(null);
+
+  const params = useLocalSearchParams();
 
   useEffect(() => {
-    const fetchData = async (productCategory: string, productId: string) => {
-      const url = `http://192.168.1.6:3000/${
-        productCategory === "Beverages"
-          ? `all-coffee/${productId}`
-          : `all-coffee-bean/${productId}`
-      }`;
-      try {
-        const response = await axios.get(url);
-        setProductDetails(response.data);
-      } catch (err) {
-        // Assert error type
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError("An unknown error occurred");
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData(category as string, id as string);
-  }, []);
+    if (params.category) {
+      setProductCategory(
+        Array.isArray(params.category) ? params.category[0] : params.category
+      );
+    }
+    if (params.productId) {
+      setProductId(
+        Array.isArray(params.productId) ? params.productId[0] : params.productId
+      );
+    }
+    if (productCategory && productId) {
+      fetchData(productCategory as string, productId as string);
+    }
+  }, [params]);
 
+  // Handle Fetch Data
+  const fetchData = async (productCategory: string, productId: string) => {
+    const url = `http://192.168.1.6:3000/${
+      productCategory === "Beverages"
+        ? `all-coffee/${productId}`
+        : `all-coffee-bean/${productId}`
+    }`;
+    try {
+      const response = await axios.get(url);
+      setProductDetails(response.data);
+    } catch (err) {
+      // Assert error type
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // handle back button
   const router = useRouter();
   const handleBack = () => {
     router.back();
   };
-
-  // Receive productId and category
-  const params = useLocalSearchParams();
-  const id = params.productId;
-  const category = params.category;
 
   // Interface for typescript
   interface ProductDetails {
@@ -72,6 +89,68 @@ const Details = () => {
     title: string;
     favourite: boolean;
   }
+
+  const handleAddToCart = () => {
+    // console.log(user);
+  };
+
+  const coffeeSizes = [
+    {
+      size: "S",
+      times: 1,
+    },
+    {
+      size: "M",
+      times: 1.5,
+    },
+    {
+      size: "L",
+      times: 2,
+    },
+  ];
+
+  const coffeeBeanSizes = [
+    {
+      size: "250g",
+      times: 1,
+    },
+    {
+      size: "500g",
+      times: 2,
+    },
+    {
+      size: "1kg",
+      times: 4,
+    },
+  ];
+
+  const handleSizeSelection = (size: string, type: string) => {
+    setSelectedSize(size);
+    type === "coffee" ? setCoffeeSize(size) : setBeanSize(size);
+  };
+
+  const setCoffeeSize = (size: string) => {
+    if (size === "S") {
+      setSelectedPrice(1);
+    } else if (size === "M") {
+      setSelectedPrice(1.5);
+    } else if (size === "L") {
+      setSelectedPrice(2);
+    }
+  };
+
+  const setBeanSize = (size: string) => {
+    if (size === "250g") {
+      setSelectedPrice(1);
+    } else if (size === "500g") {
+      setSelectedPrice(2);
+    } else if (size === "1kg") {
+      setSelectedPrice(4);
+    }
+  };
+
+  const sizesToMap =
+    productCategory === "Beverages" ? coffeeSizes : coffeeBeanSizes;
 
   return (
     <SafeAreaView className="flex-1 bg-[#0C0F14] min-h-screen">
@@ -166,16 +245,31 @@ const Details = () => {
             {/* Size */}
             <View className="mt-4 mb-5">
               <Text className="text-[#AEAEAE] text-lg font-semibold">Size</Text>
-              <View className="flex-row justify-between">
-                <Text className="text-white text-xl font-semibold bg-[#52555A] px-10 rounded">
-                  S
-                </Text>
-                <Text className="text-white text-xl font-semibold bg-[#52555A] px-10 rounded">
-                  M
-                </Text>
-                <Text className="text-white text-xl font-semibold bg-[#52555A] px-10 rounded">
-                  L
-                </Text>
+              {productCategory === "Beverages" ? (
+                <Text className="text-white">coffee</Text>
+              ) : (
+                <Text className="text-white">bean</Text>
+              )}
+              <View className={`flex-row justify-between items-center`}>
+                {sizesToMap.map((item) => (
+                  <Text
+                    key={item.times}
+                    className={`text-white font-semibold bg-[#52555A] px-10 rounded border-2 ${
+                      selectedSize === item.size
+                        ? "border-blue-500"
+                        : "border-0"
+                    } ${
+                      sizesToMap === coffeeSizes ? "text-xl" : "text-xs py-2"
+                    }`}
+                    onPress={() =>
+                      sizesToMap === coffeeSizes
+                        ? handleSizeSelection(item.size, "coffee")
+                        : handleSizeSelection(item.size, "beans")
+                    }
+                  >
+                    {item.size}
+                  </Text>
+                ))}
               </View>
             </View>
 
@@ -185,14 +279,19 @@ const Details = () => {
                 <Text className="text-[#AEAEAE] font-semibold">Price</Text>
                 <Text className="text-[#FFFFFF] font-semibold text-xl">
                   <Text className="text-[#D17842]">$ </Text>
-                  {productDetails?.price}
+                  {productDetails?.price
+                    ? (productDetails.price * selectedPrice).toFixed(2)
+                    : "0.00"}
                 </Text>
               </View>
-              <View>
-                <Text className="bg-[#D17842] text-white px-10 text-xl py-2 rounded-lg">
+              <TouchableOpacity activeOpacity={0.8}>
+                <Text
+                  onPress={handleAddToCart}
+                  className="bg-[#D17842] text-white px-10 text-xl py-2 rounded-lg"
+                >
                   Add to Cart
                 </Text>
-              </View>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
