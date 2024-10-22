@@ -1,5 +1,6 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import {
+  Animated,
   Image,
   ImageBackground,
   SafeAreaView,
@@ -9,7 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import {
   AntDesign,
   Feather,
@@ -17,6 +18,8 @@ import {
   MaterialIcons,
 } from "@expo/vector-icons";
 import axios from "axios";
+import { AuthContext } from "../providers/AuthProvider";
+import { AnimateStyle } from "react-native-reanimated/lib/typescript/Animated";
 
 const Details = () => {
   // States
@@ -29,6 +32,9 @@ const Details = () => {
   const [selectedPrice, setSelectedPrice] = useState(1);
   const [productId, setProductId] = useState<string | null>(null);
   const [productCategory, setProductCategory] = useState<string | null>(null);
+  const { user } = useContext(AuthContext);
+  const [successAlert, setSuccessAlert] = useState(false);
+  const slideAnim = useRef(new Animated.Value(-100)).current;
 
   const params = useLocalSearchParams();
 
@@ -90,10 +96,6 @@ const Details = () => {
     favourite: boolean;
   }
 
-  const handleAddToCart = () => {
-    // console.log(user);
-  };
-
   const coffeeSizes = [
     {
       size: "S",
@@ -151,6 +153,56 @@ const Details = () => {
 
   const sizesToMap =
     productCategory === "Beverages" ? coffeeSizes : coffeeBeanSizes;
+
+  // Using interface to get rid off typescript error.
+  interface ProductDetails {
+    _id: string;
+  }
+
+  const handleAlert = () => {
+    setSuccessAlert(true);
+    // Hide alert after 2 seconds
+    Animated.timing(slideAnim, {
+      toValue: 100, // Slide down into view
+      duration: 500,
+      useNativeDriver: true,
+    }).start();
+
+    setTimeout(() => {
+      Animated.timing(slideAnim, {
+        toValue: -100, // Slide up out of view
+        duration: 500,
+        useNativeDriver: true,
+      }).start(() => {
+        setSuccessAlert(false);
+      });
+    }, 2000);
+  };
+
+  const handleAddToCart = async (id: string, email: string) => {
+    const mainPrice = productDetails?.price;
+    const finalPrice = mainPrice ? (mainPrice * selectedPrice).toFixed(2) : 0;
+    const data = {
+      name: productDetails?.name,
+      email: email,
+      size: selectedSize,
+      price: finalPrice,
+      imageUrl: productDetails?.imageUrl,
+      category: productDetails?.category,
+      quantity: 1,
+    };
+    try {
+      axios.post('http://192.168.1.6:3000/cart', data)
+      .then(res => {
+        if(res.data.insertedId){
+          handleAlert();
+        }
+      })
+      
+    } catch (error: any) {
+      setError(error.message);
+    }
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-[#0C0F14] min-h-screen">
@@ -245,11 +297,6 @@ const Details = () => {
             {/* Size */}
             <View className="mt-4 mb-5">
               <Text className="text-[#AEAEAE] text-lg font-semibold">Size</Text>
-              {productCategory === "Beverages" ? (
-                <Text className="text-white">coffee</Text>
-              ) : (
-                <Text className="text-white">bean</Text>
-              )}
               <View className={`flex-row justify-between items-center`}>
                 {sizesToMap.map((item) => (
                   <Text
@@ -284,16 +331,45 @@ const Details = () => {
                     : "0.00"}
                 </Text>
               </View>
-              <TouchableOpacity activeOpacity={0.8}>
-                <Text
-                  onPress={handleAddToCart}
-                  className="bg-[#D17842] text-white px-10 text-xl py-2 rounded-lg"
-                >
-                  Add to Cart
-                </Text>
+              <TouchableOpacity
+                activeOpacity={0.6}
+                onPress={() => {
+                  if (
+                    productDetails &&
+                    productDetails._id &&
+                    user &&
+                    "email" in user
+                  ) {
+                    handleAddToCart(productDetails._id, user.email);
+                  } else {
+                    console.error(
+                      "Either productDetails or user.email is not available."
+                    );
+                  }
+                }}
+                className="bg-[#D17842] px-10 py-2 rounded-lg"
+              >
+                <Text className="text-white text-xl">Add to Cart</Text>
               </TouchableOpacity>
             </View>
           </View>
+
+          {successAlert && (
+            <Animated.View
+              style={{
+                transform: [{ translateY: slideAnim }],
+                opacity: slideAnim.interpolate({
+                  inputRange: [-100, 0],
+                  outputRange: [0, 1],
+                }),
+              }}
+              className="absolute top-10 w-full bg-[#D17842]/80 py-3 px-5 rounded-lg items-center justify-center mx-auto"
+            >
+              <Text className="text-white text-lg font-semibold">
+                Item added to cart!
+              </Text>
+            </Animated.View>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
