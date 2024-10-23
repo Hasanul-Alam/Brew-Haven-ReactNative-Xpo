@@ -2,34 +2,68 @@ import {
   Image,
   SafeAreaView,
   ScrollView,
-  StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
-import { AntDesign, Octicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { AntDesign } from "@expo/vector-icons";
+import { useFocusEffect, useRouter } from "expo-router";
 import { AuthContext } from "@/app/providers/AuthProvider";
 import PageHeader from "@/app/reusableComponents/PageHeader";
 import axios from "axios";
 
 const Cart = () => {
-  const [products, setProducts] = useState<ProductDetails | []>([]);
-
+  const [products, setProducts] = useState<ProductDetails[]>([]);
+  const [totalPrice, setTotalPrice] = useState(0); // State to store total price
+  const { user } = useContext(AuthContext) as { user: any };
   const router = useRouter();
 
-  const handleGetProduct = async () => {
-    const response = await axios.get(
-      `http://192.168.1.6:3000/cart/hasanulalam450@gmail.com`
-    );
+  const handleGetProduct = async (email: string) => {
+    const response = await axios.get(`http://192.168.1.6:3000/cart/${email}`);
     setProducts(response.data);
+    calculateTotalPrice(response.data); // Calculate total price when data is fetched
   };
 
-  useEffect(() => {
-    handleGetProduct();
-  }, []);
+  // Calculate total price
+  const calculateTotalPrice = (updatedProducts: ProductDetails[]) => {
+    const total = updatedProducts.reduce((sum, product) => {
+      return sum + product.price * product.quantity;
+    }, 0);
+    setTotalPrice(total);
+  };
+
+  // Handle quantity change
+  const handleQuantityChange = (productId: string, action: "increase" | "decrease") => {
+    const updatedProducts = products.map((product) => {
+      if (product._id === productId) {
+        if (action === "increase") {
+          product.quantity += 1;
+        } else if (action === "decrease" && product.quantity > 1) {
+          product.quantity -= 1;
+        }
+      }
+      return product;
+    });
+    setProducts(updatedProducts);
+    calculateTotalPrice(updatedProducts);
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchData = async () => {
+        if (user && user.email) {
+          try {
+            await handleGetProduct(user.email); // Call function to fetch cart data
+          } catch (error) {
+            console.error("Error fetching cart data:", error);
+          }
+        }
+      };
+
+      fetchData();
+    }, [user])
+  );
 
   // Interface for typescript error
   interface ProductDetails {
@@ -48,13 +82,12 @@ const Cart = () => {
       <ScrollView>
         <View className="bg-[#0C0F14] pt-12 pb-5 min-h-screen w-full flex-1">
           <View className="w-[85%] mx-auto">
-            {/* Cart Header */}
             <PageHeader
               headerTitle="Cart"
               imageUrl="https://i.ibb.co.com/jGMVDW2/coffee-shop.jpg"
             />
 
-            {/* Cart Card */}
+            {/* Cart Items */}
             {Array.isArray(products) && products.length > 0 ? (
               products.map((product: ProductDetails) => (
                 <View
@@ -65,45 +98,42 @@ const Cart = () => {
                     className="w-[110px] h-[120px] rounded-xl"
                     source={{ uri: `${product.imageUrl}` }}
                   />
-                  {/* Product Details */}
                   <View>
                     <Text className="text-white text-lg font-semibold">
-                      Cappuccino
+                      {product.name}
                     </Text>
-                    <Text className="text-white text-xs">
-                      With Steamed Milk
-                    </Text>
+                    <Text className="text-white text-xs">{product.category}</Text>
+
                     {/* Size & Price */}
                     <View className="flex-row justify-between my-3 items-center gap-x-8">
-                      <Text className="bg-[#0C0F14] text-white text-xl px-7 rounded">
-                        M
+                      <Text className="bg-[#0C0F14] text-white text-lg px-5 rounded">
+                        {product.size}
                       </Text>
                       <Text className="text-xl text-white">
-                        <Text className="text-[#D17842]">$</Text> 6.20
+                        <Text className="text-[#D17842]">$</Text>{" "}
+                        {(product.price * product.quantity).toFixed(2)} {/* Update price based on quantity */}
                       </Text>
                     </View>
-                    {/* Quantity & Increase Decrease Button */}
+
+                    {/* Quantity & Buttons */}
                     <View className="flex-row justify-between gap-5 items-center">
-                      <View className="bg-[#D17842] p-1 rounded">
-                        <AntDesign
-                          className="bg-[#D17842]"
-                          color={"#FFFFFF"}
-                          name="minus"
-                          size={17}
-                        />
-                      </View>
-                      <TextInput
-                        className="border border-1 border-[#D17842] px-5 text-center rounded text-white"
-                        value="1"
-                      />
-                      <View className="bg-[#D17842] p-1 rounded">
-                        <AntDesign
-                          className="bg-[#D17842]"
-                          color={"#FFFFFF"}
-                          name="plus"
-                          size={17}
-                        />
-                      </View>
+                      <TouchableOpacity
+                        className="bg-[#D17842] p-1 rounded"
+                        onPress={() => handleQuantityChange(product._id!, "decrease")}
+                      >
+                        <AntDesign color={"#FFFFFF"} name="minus" size={17} />
+                      </TouchableOpacity>
+
+                      <Text className="border border-1 border-[#D17842] px-6 py-1 text-center rounded text-white">
+                        {product.quantity}
+                      </Text>
+
+                      <TouchableOpacity
+                        className="bg-[#D17842] p-1 rounded"
+                        onPress={() => handleQuantityChange(product._id!, "increase")}
+                      >
+                        <AntDesign color={"#FFFFFF"} name="plus" size={17} />
+                      </TouchableOpacity>
                     </View>
                   </View>
                 </View>
@@ -117,7 +147,9 @@ const Cart = () => {
                       uri: `https://i.ibb.co.com/c1nRSwC/empty-page.gif`,
                     }}
                   />
-                  <Text className="text-white text-center text-xl font-semibold">Nothing Here</Text>
+                  <Text className="text-white text-center text-xl font-semibold">
+                    Nothing Here
+                  </Text>
                 </View>
               </View>
             )}
@@ -138,7 +170,7 @@ const Cart = () => {
                       ${" "}
                     </Text>
                     <Text className="text-white text-xl font-semibold">
-                      32.65
+                      {totalPrice.toFixed(2)} {/* Display the calculated total price */}
                     </Text>
                   </View>
                 </View>
@@ -163,5 +195,3 @@ const Cart = () => {
 };
 
 export default Cart;
-
-const styles = StyleSheet.create({});
