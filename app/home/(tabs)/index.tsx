@@ -10,7 +10,13 @@ import {
   View,
 } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
-import { AntDesign, Feather, FontAwesome, MaterialCommunityIcons, Octicons } from "@expo/vector-icons";
+import {
+  AntDesign,
+  Feather,
+  FontAwesome,
+  MaterialCommunityIcons,
+  Octicons,
+} from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import PageHeader from "@/app/reusableComponents/PageHeader";
 import axios from "axios";
@@ -19,8 +25,8 @@ import { AuthContext } from "@/app/providers/AuthProvider";
 import useAsyncStorage from "@/app/hooks/useAsyncStorage";
 
 const Home = () => {
-  const [coffeeData, setCoffeeData] = useState([]);
-  const [coffeeBeanData, setCoffeeBeanData] = useState([]);
+  const [coffeeData, setCoffeeData] = useState<Item[]>([]);
+  const [coffeeBeanData, setCoffeeBeanData] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { user, setUser } = useContext(AuthContext);
@@ -52,15 +58,16 @@ const Home = () => {
 
     fetchData("coffee");
     fetchData("coffee-bean");
+    // console.log(coffeeData.length)
   }, []);
 
   // Define Types of Each Item.
   interface Item {
     _id: string;
     name: string;
-    title: string;
+    title?: string; // Make it optional if missing
     imageUrl: string;
-    description: string;
+    description?: string;
     price: number;
     category: string;
   }
@@ -78,14 +85,14 @@ const Home = () => {
               className="w-[100px] h-[100px] rounded-lg"
             />
             <Text className="color-white mt-3 uppercase font-semibold">
-              {item.name.length > 14
+              {item?.name?.length > 14
                 ? item.name.slice(0, 10) + "..."
-                : item.name}
+                : item?.name || ""}
             </Text>
             <Text className="text-white text-xs">
-              {item.title.length > 14
+              {item?.title && item.title.length > 14
                 ? item.title.slice(0, 10) + "..."
-                : item.title}
+                : item?.title || "No Title Available"}
             </Text>
             <View className="flex-row justify-between items-center mt-3">
               <Text className="text-white text-lg font-semibold">
@@ -93,9 +100,14 @@ const Home = () => {
                 {item.price}
               </Text>
               <Text className="bg-[#D17842] p-1 rounded text-white">
-                {
-                  extraParam === 'coffee' ? <Feather name="coffee" size={15} /> : <MaterialCommunityIcons name="coffee-maker-outline" size={15} />
-                }
+                {extraParam === "coffee" ? (
+                  <Feather name="coffee" size={15} />
+                ) : (
+                  <MaterialCommunityIcons
+                    name="coffee-maker-outline"
+                    size={15}
+                  />
+                )}
               </Text>
             </View>
           </View>
@@ -118,21 +130,6 @@ const Home = () => {
       <ScrollView className="mt-14">
         <View className="w-full">
           {/* Header Top */}
-          {/* <View className="flex-row justify-between items-center w-[85%] mx-auto">
-            <View>
-              <View className="bg-[#21262E] px-2 py-1 rounded-lg">
-                <Octicons name="apps" color={"#ded9d9"} size={25} />
-              </View>
-            </View>
-            <View className="w-[35px] h-[35px]">
-              <Image
-                className="w-full h-full rounded-xl"
-                source={{
-                  uri: "https://i.ibb.co.com/jGMVDW2/coffee-shop.jpg",
-                }}
-              />
-            </View>
-          </View> */}
           <View className="w-[85%] mx-auto">
             <PageHeader
               headerTitle=""
@@ -169,10 +166,8 @@ const Home = () => {
                 <LoadingProducts />
               ) : (
                 <FlatList
-                  data={coffeeData as any[]}
-                  renderItem={({ item }) =>
-                    renderItem({ item }, "coffee")
-                  }
+                  data={coffeeData}
+                  renderItem={({ item }) => renderItem({ item }, "coffee")}
                   keyExtractor={(item) => item._id}
                   horizontal
                   showsHorizontalScrollIndicator={true}
@@ -191,10 +186,8 @@ const Home = () => {
                 <LoadingProducts />
               ) : (
                 <FlatList
-                  data={coffeeBeanData as any[]}
-                  renderItem={({ item }) =>
-                    renderItem({ item }, "coffee-bean")
-                  }
+                  data={coffeeBeanData}
+                  renderItem={({ item }) => renderItem({ item }, "coffee-bean")}
                   keyExtractor={(item) => item._id}
                   horizontal
                   showsHorizontalScrollIndicator={true}

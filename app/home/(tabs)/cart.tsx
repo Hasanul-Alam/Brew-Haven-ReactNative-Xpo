@@ -88,7 +88,7 @@ const Cart = () => {
             />
 
             {/* Cart Items */}
-            {Array.isArray(products) && products.length > 0 ? (
+            {Array.isArray(products) && products?.length > 0 ? (
               products.map((product: ProductDetails) => (
                 <View
                   key={product._id}
@@ -158,7 +158,7 @@ const Cart = () => {
           {/* Bottom View */}
           <View
             className={`flex-1 justify-end ${
-              Array.isArray(products) && products.length ? "block" : "hidden"
+              Array.isArray(products) && products?.length ? "block" : "hidden"
             }`}
           >
             <View className="w-[85%] mx-auto p-4 rounded-lg mt-5">

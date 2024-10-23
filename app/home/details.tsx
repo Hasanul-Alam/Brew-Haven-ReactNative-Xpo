@@ -96,6 +96,11 @@ const Details = () => {
     favourite: boolean;
   }
 
+  interface User {
+    email: string;
+    // Add other user properties if needed
+  }
+
   const coffeeSizes = [
     {
       size: "S",
@@ -192,15 +197,80 @@ const Details = () => {
       quantity: 1,
     };
     try {
-      axios.post('http://192.168.1.6:3000/cart', data)
-      .then(res => {
-        if(res.data.insertedId){
+      axios.post("http://192.168.1.6:3000/cart", data).then((res) => {
+        if (res.data.insertedId) {
           handleAlert();
         }
-      })
-      
+      });
     } catch (error: any) {
       setError(error.message);
+    }
+  };
+
+  // Handle favourite list
+  const handleFavouriteList = async (data: any, isInsert: boolean) => {
+    if (isInsert) {
+      const response = await axios.post(
+        "http://192.168.1.6:3000/favourite",
+        data
+      );
+      if (response.data.insertedId) {
+        alert("Favourite inserted");
+      }
+    } else {
+      const response = await axios.delete(
+        `http://192.168.1.6:3000/favourite/${data.id}`
+      );
+      if (response.data.deletedCount > 0) {
+        alert("deleted successfully from favourite list");
+      }
+    }
+  };
+
+  // handle favourite
+  const handleFavourite = async (product: any, email: any) => {
+    const data = {
+      id: product._id,
+      name: product.name,
+      category: product.category,
+      rating: product.rating,
+      ratingCount: product.ratingCount,
+      title: product.title,
+      description: product.description,
+      imageUrl: product.imageUrl,
+      email: email,
+    };
+
+    // Update favourite
+    if (product.category === "Beverages") {
+      const response = await axios.patch(
+        `http://192.168.1.6:3000/all-coffee/${product._id}`,
+        { favourite: !product.favourite }
+      );
+      console.log(!product.favourite);
+      if (!product.favourite === true && response.data.modifiedCount > 0) {
+        handleFavouriteList(data, true);
+        // console.log('add please')
+      } else if (
+        !product.favourite === false &&
+        response.data.modifiedCount > 0
+      ) {
+        handleFavouriteList(data, false);
+        // console.log('delete please')
+      }
+    } else {
+      const response = await axios.patch(
+        `http://192.168.1.6:3000/all-coffee-bean/${product._id}`,
+        { favourite: !product.favourite }
+      );
+      if (!product.favourite === true && response.data.modifiedCount > 0) {
+        handleFavouriteList(data, true);
+      } else if (
+        !product.favourite === false &&
+        response.data.modifiedCount > 0
+      ) {
+        handleFavouriteList(data, false);
+      }
     }
   };
 
@@ -222,7 +292,12 @@ const Details = () => {
                   >
                     <Ionicons name="chevron-back" size={25} />
                   </Text>
-                  <Text className="text-white bg-[#21262E] p-1 rounded-lg">
+                  <Text
+                    onPress={() =>
+                      handleFavourite(productDetails, (user as User).email)
+                    }
+                    className="text-white bg-[#21262E] p-1 rounded-lg"
+                  >
                     <MaterialIcons
                       name="favorite"
                       size={25}
