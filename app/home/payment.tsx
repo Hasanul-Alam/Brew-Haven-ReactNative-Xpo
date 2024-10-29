@@ -51,7 +51,7 @@ const Payment = () => {
   const handleClearCart = async () => {
     if (user && "email" in user) {
       const response = await axios.delete(
-        `http://192.168.1.6:3000/cart/${user.email}`
+        `https://brew-haven-server.onrender.com/cart/${user.email}`
       );
       if (response.data.deletedCount > 0) {
         alert("items deleted from cart");
@@ -64,7 +64,7 @@ const Payment = () => {
   const handlePayment = async () => {
     const data = await makeOrdersData(cartItems);
     if (data) {
-      axios.post("http://192.168.1.6:3000/orders", data).then((res) => {
+      axios.post("https://brew-haven-server.onrender.com/orders", data).then((res) => {
         if (res.data.insertedCount) {
           handleClearCart();
           // alert("data inserted");

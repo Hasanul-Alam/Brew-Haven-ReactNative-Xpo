@@ -18,7 +18,7 @@ const Orders = () => {
   const { user } = useContext(AuthContext) as { user: any };
 
   const handleGetData = async (email: any) => {
-    const response = await axios.get(`http://192.168.1.6:3000/orders/${email}`);
+    const response = await axios.get(`https://brew-haven-server.onrender.com/orders/${email}`);
     setOrders(response.data);
   };
 

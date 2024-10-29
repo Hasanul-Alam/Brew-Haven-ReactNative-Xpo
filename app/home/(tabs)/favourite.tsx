@@ -27,7 +27,7 @@ const Favourites = () => {
   // Handle favourite
   const handleGetFavourite = async (email: any) => {
     const response = await axios.get(
-      `http://192.168.1.6:3000/favourite/${email}`
+      `https://brew-haven-server.onrender.com/favourite/${email}`
     );
     console.log(response.data);
     setProducts(response.data);

@@ -34,7 +34,7 @@ const Home = () => {
 
   useEffect(() => {
     const fetchData = async (productType: string) => {
-      const url = `http://192.168.1.6:3000/${
+      const url = `https://brew-haven-server.onrender.com/${
         productType === "coffee" ? "all-coffee" : "all-coffee-bean"
       }`;
       try {

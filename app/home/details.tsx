@@ -56,7 +56,7 @@ const Details = () => {
 
   // Handle Fetch Data
   const fetchData = async (productCategory: string, productId: string) => {
-    const url = `http://192.168.1.6:3000/${
+    const url = `https://brew-haven-server.onrender.com/${
       productCategory === "Beverages"
         ? `all-coffee/${productId}`
         : `all-coffee-bean/${productId}`
@@ -197,7 +197,7 @@ const Details = () => {
       quantity: 1,
     };
     try {
-      axios.post("http://192.168.1.6:3000/cart", data).then((res) => {
+      axios.post("https://brew-haven-server.onrender.com/cart", data).then((res) => {
         if (res.data.insertedId) {
           handleAlert();
         }
@@ -211,7 +211,7 @@ const Details = () => {
   const handleFavouriteList = async (data: any, isInsert: boolean) => {
     if (isInsert) {
       const response = await axios.post(
-        "http://192.168.1.6:3000/favourite",
+        "https://brew-haven-server.onrender.com/favourite",
         data
       );
       if (response.data.insertedId) {
@@ -219,7 +219,7 @@ const Details = () => {
       }
     } else {
       const response = await axios.delete(
-        `http://192.168.1.6:3000/favourite/${data.id}`
+        `https://brew-haven-server.onrender.com/favourite/${data.id}`
       );
       if (response.data.deletedCount > 0) {
         alert("deleted successfully from favourite list");
@@ -244,7 +244,7 @@ const Details = () => {
     // Update favourite
     if (product.category === "Beverages") {
       const response = await axios.patch(
-        `http://192.168.1.6:3000/all-coffee/${product._id}`,
+        `https://brew-haven-server.onrender.com/all-coffee/${product._id}`,
         { favourite: !product.favourite }
       );
       console.log(!product.favourite);
@@ -260,7 +260,7 @@ const Details = () => {
       }
     } else {
       const response = await axios.patch(
-        `http://192.168.1.6:3000/all-coffee-bean/${product._id}`,
+        `https://brew-haven-server.onrender.com/all-coffee-bean/${product._id}`,
         { favourite: !product.favourite }
       );
       if (!product.favourite === true && response.data.modifiedCount > 0) {
