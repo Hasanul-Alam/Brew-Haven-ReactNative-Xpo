@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { AuthContext } from "../providers/AuthProvider";
 import { UserCredential } from "firebase/auth";
 import LoadingSpinner from "../reusableComponents/LoadingSpinner";
@@ -59,9 +59,16 @@ export default function Login() {
     }
   };
 
-  useEffect(() => {
-    fetchDataFromStorage();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchDataFromStorage();
+      
+      // Optionally, if you need to clean up when the screen loses focus
+      return () => {
+        // Cleanup code if needed
+      };
+    }, [])
+  );
 
   return (
     <View className="flex-1 bg-[#0C0F14] justify-center px-6">
