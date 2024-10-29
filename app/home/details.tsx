@@ -168,7 +168,7 @@ const Details = () => {
     setSuccessAlert(true);
     // Hide alert after 2 seconds
     Animated.timing(slideAnim, {
-      toValue: 100, // Slide down into view
+      toValue: 25, // Slide down into view
       duration: 500,
       useNativeDriver: true,
     }).start();

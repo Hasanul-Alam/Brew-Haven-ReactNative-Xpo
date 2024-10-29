@@ -7,16 +7,76 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
-import { Ionicons, MaterialIcons, Octicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import React, { useContext, useState } from "react";
+import { Ionicons } from "@expo/vector-icons";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import axios from "axios";
+import { AuthContext } from "../providers/AuthProvider";
 
 const Payment = () => {
   const router = useRouter();
+  const { cart } = useLocalSearchParams();
+  const { user } = useContext(AuthContext);
+  const [products, setProducts] = useState<CartItem[]>([]);
+
+  const cartItems = typeof cart === "string" ? JSON.parse(cart) : cart || [];
+
+  // Interface to avoid typescript error
+  interface CartItem {
+    id: number;
+    price: number;
+    quantity: number;
+  }
+
+  interface Item {
+    _id: any;
+    name: string;
+    date: string; // or Date if you're using Date objects
+  }
+
+  const makeOrdersData = (items: Item[]) => {
+    const currentDate = new Date();
+    const formattedDate = currentDate.toDateString();
+    const totalAmount = cartItems.reduce((accumulator: number, item: any) => {
+      return accumulator + item.price * item.quantity;
+    }, 0);
+    const itemsWithDate = items.map(({ _id, ...rest }) => ({
+      ...rest,
+      date: formattedDate,
+    }));
+    return itemsWithDate;
+  };
+
+  // handle clear cart
+  const handleClearCart = async () => {
+    if (user && "email" in user) {
+      const response = await axios.delete(
+        `http://192.168.1.6:3000/cart/${user.email}`
+      );
+      if (response.data.deletedCount > 0) {
+        alert("items deleted from cart");
+      }
+    } else {
+      console.log("User is not defined or email is missing");
+    }
+  };
+
+  const handlePayment = async () => {
+    const data = await makeOrdersData(cartItems);
+    if (data) {
+      axios.post("http://192.168.1.6:3000/orders", data).then((res) => {
+        if (res.data.insertedCount) {
+          handleClearCart();
+          // alert("data inserted");
+        }
+      });
+    }
+  };
+
   return (
     <SafeAreaView className="bg-[#0C0F14] flex-1">
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <View className="bg-[#0C0F14] py-12 w-full flex-1">
+        <View className="bg-[#0C0F14] py-12 w-full flex-1 min-h-screen">
           <View className="w-[85%] mx-auto">
             {/* Payment Header */}
             <View className="my-5">
@@ -99,6 +159,7 @@ const Payment = () => {
 
             {/* Other Payment System */}
             <View className="">
+              {/* Wallet */}
               <View className="flex-row justify-between bg-[#262B33] px-3 rounded-full items-center py-3 mt-8">
                 <View className="flex-row gap-2">
                   <View className="w-[25px] h-[20px]">
@@ -115,6 +176,7 @@ const Payment = () => {
                   <Text className="text-white">$ 23.65</Text>
                 </View>
               </View>
+              {/* Google Pay */}
               <View className="flex-row justify-between bg-[#262B33] px-3 rounded-full items-center py-3 mt-3">
                 <View className="flex-row gap-2">
                   <View className="w-[25px] h-[20px]">
@@ -131,6 +193,7 @@ const Payment = () => {
                   <Text className="text-white">$ 680.96</Text>
                 </View>
               </View>
+              {/* Amazon Pay */}
               <View className="flex-row justify-between bg-[#262B33] px-3 rounded-full items-center py-3 mt-3">
                 <View className="flex-row gap-2 items-center">
                   <View className="w-[25px] h-[20px]">
@@ -149,6 +212,18 @@ const Payment = () => {
                 </View>
               </View>
             </View>
+          </View>
+
+          {/* Payment Button */}
+          <View className="mt-5 w-[85%] mx-auto flex-1 justify-end">
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => handlePayment()}
+            >
+              <Text className="text-white text-center bg-[#D17842] py-2 text-xl rounded-xl">
+                Pay
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>

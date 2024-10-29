@@ -14,7 +14,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { loadData, clearStorage } = useAsyncStorage("user");
+  const { loadData, saveData } = useAsyncStorage("user");
   const router = useRouter();
 
   const handleLogin = async () => {
@@ -26,6 +26,14 @@ export default function Login() {
       if (userCredential?.user) {
         setUser(userCredential.user);
         setLoading(false);
+
+        // Save login data to local storage
+        saveData({
+          email: userCredential.user.email,
+          uid: userCredential.user.uid,
+          name: userCredential.user.displayName,
+          photoURL: userCredential.user.photoURL,
+        });
 
         // Redirect to the homepage after successfuly signup
         router.replace("/home");

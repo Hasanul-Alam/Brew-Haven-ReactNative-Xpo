@@ -22,7 +22,7 @@ const Cart = () => {
   const handleGetProduct = async (email: string) => {
     const response = await axios.get(`http://192.168.1.6:3000/cart/${email}`);
     setProducts(response.data);
-    calculateTotalPrice(response.data); // Calculate total price when data is fetched
+    calculateTotalPrice(response.data);
   };
 
   // Calculate total price
@@ -34,7 +34,10 @@ const Cart = () => {
   };
 
   // Handle quantity change
-  const handleQuantityChange = (productId: string, action: "increase" | "decrease") => {
+  const handleQuantityChange = (
+    productId: string,
+    action: "increase" | "decrease"
+  ) => {
     const updatedProducts = products.map((product) => {
       if (product._id === productId) {
         if (action === "increase") {
@@ -102,7 +105,9 @@ const Cart = () => {
                     <Text className="text-white text-lg font-semibold">
                       {product.name}
                     </Text>
-                    <Text className="text-white text-xs">{product.category}</Text>
+                    <Text className="text-white text-xs">
+                      {product.category}
+                    </Text>
 
                     {/* Size & Price */}
                     <View className="flex-row justify-between my-3 items-center gap-x-8">
@@ -111,7 +116,8 @@ const Cart = () => {
                       </Text>
                       <Text className="text-xl text-white">
                         <Text className="text-[#D17842]">$</Text>{" "}
-                        {(product.price * product.quantity).toFixed(2)} {/* Update price based on quantity */}
+                        {(product.price * product.quantity).toFixed(2)}{" "}
+                        {/* Update price based on quantity */}
                       </Text>
                     </View>
 
@@ -119,7 +125,9 @@ const Cart = () => {
                     <View className="flex-row justify-between gap-5 items-center">
                       <TouchableOpacity
                         className="bg-[#D17842] p-1 rounded"
-                        onPress={() => handleQuantityChange(product._id!, "decrease")}
+                        onPress={() =>
+                          handleQuantityChange(product._id!, "decrease")
+                        }
                       >
                         <AntDesign color={"#FFFFFF"} name="minus" size={17} />
                       </TouchableOpacity>
@@ -130,7 +138,9 @@ const Cart = () => {
 
                       <TouchableOpacity
                         className="bg-[#D17842] p-1 rounded"
-                        onPress={() => handleQuantityChange(product._id!, "increase")}
+                        onPress={() =>
+                          handleQuantityChange(product._id!, "increase")
+                        }
                       >
                         <AntDesign color={"#FFFFFF"} name="plus" size={17} />
                       </TouchableOpacity>
@@ -170,13 +180,21 @@ const Cart = () => {
                       ${" "}
                     </Text>
                     <Text className="text-white text-xl font-semibold">
-                      {totalPrice.toFixed(2)} {/* Display the calculated total price */}
+                      {totalPrice.toFixed(2)}{" "}
+                      {/* Display the calculated total price */}
                     </Text>
                   </View>
                 </View>
                 <View>
                   <TouchableOpacity
-                    onPress={() => router.push("/home/payment")}
+                    onPress={() =>
+                      router.push({
+                        pathname: "/home/payment",
+                        params: {
+                          cart: JSON.stringify(products),
+                        },
+                      })
+                    }
                     activeOpacity={0.8}
                     className="bg-[#D17842] px-16 py-2 rounded-full"
                   >
