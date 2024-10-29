@@ -175,9 +175,16 @@ export default function SignUp() {
           />
 
           {/* Image Picker Button */}
-          <Button title="Pick an image from camera roll" onPress={pickImage} />
+          <TouchableOpacity activeOpacity={0.8} className="mt-3">
+            <Text
+              onPress={pickImage}
+              className="text-white text-center bg-[#ba7ed6] w-full text-lg py-1 rounded"
+            >
+              Select Image
+            </Text>
+          </TouchableOpacity>
 
-          {/* SignUp Button */}
+          {/* Signup button */}
           <LoginSignUpButton
             buttonTitle="Sign Up"
             onPressFunction={handleSignUp}
