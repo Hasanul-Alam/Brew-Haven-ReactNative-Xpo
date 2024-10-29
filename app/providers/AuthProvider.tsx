@@ -1,4 +1,5 @@
 import { createContext, useEffect, useState, ReactNode } from "react";
+import {auth} from '../firebase/firebase.config';
 import React from "react";
 import {
   createUserWithEmailAndPassword,
@@ -30,7 +31,7 @@ interface AuthContextType {
   setError: (error: string) => void;
 }
 
-const auth = getAuth(app);
+// const auth = getAuth(app);
 
 export const AuthContext = createContext<AuthContextType>({
   user: {},

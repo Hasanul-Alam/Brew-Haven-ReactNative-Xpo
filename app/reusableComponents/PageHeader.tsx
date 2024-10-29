@@ -29,7 +29,7 @@ const PageHeader = ({ headerTitle, imageUrl }: PageHeaderProps) => {
           <Image
             className="w-full h-full rounded-xl"
             source={{
-              uri: (user as User)?.photoURL || '',
+              uri: (user as User)?.photoURL || 'https://i.ibb.co.com/BzzqKTm/images.png',
             }}
           />
         </View>
