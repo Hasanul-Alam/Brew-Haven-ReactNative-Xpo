@@ -19,6 +19,7 @@ import PageHeader from "@/app/reusableComponents/PageHeader";
 import { AuthContext } from "@/app/providers/AuthProvider";
 import axios from "axios";
 import { useFocusEffect } from "expo-router";
+import EmptyPage from "@/app/reusableComponents/EmptyPage";
 
 const Favourites = () => {
   const { user } = useContext(AuthContext) as { user: any };
@@ -151,19 +152,7 @@ const Favourites = () => {
                 </View>
               ))
             ) : (
-              <View className="min-h-screen bg-[#0C014] justify-center items-center -mt-20">
-                <View className="w-[100px] h-[100px]">
-                  <Image
-                    className="w-full h-full"
-                    source={{
-                      uri: `https://i.ibb.co.com/c1nRSwC/empty-page.gif`,
-                    }}
-                  />
-                  <Text className="text-white text-center text-xl font-semibold">
-                    Nothing Here
-                  </Text>
-                </View>
-              </View>
+              <EmptyPage />
             )}
           </View>
         </View>

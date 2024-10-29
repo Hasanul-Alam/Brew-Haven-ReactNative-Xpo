@@ -12,6 +12,7 @@ import { useFocusEffect, useRouter } from "expo-router";
 import { AuthContext } from "@/app/providers/AuthProvider";
 import PageHeader from "@/app/reusableComponents/PageHeader";
 import axios from "axios";
+import EmptyPage from "@/app/reusableComponents/EmptyPage";
 
 const Cart = () => {
   const [products, setProducts] = useState<ProductDetails[]>([]);
@@ -149,19 +150,7 @@ const Cart = () => {
                 </View>
               ))
             ) : (
-              <View className="min-h-screen justify-center items-center -mt-20">
-                <View className="w-[100px] h-[100px]">
-                  <Image
-                    className="w-full h-full"
-                    source={{
-                      uri: `https://i.ibb.co.com/c1nRSwC/empty-page.gif`,
-                    }}
-                  />
-                  <Text className="text-white text-center text-xl font-semibold">
-                    Nothing Here
-                  </Text>
-                </View>
-              </View>
+              <EmptyPage />
             )}
           </View>
 
