@@ -58,7 +58,6 @@ const Home = () => {
 
     fetchData("coffee");
     fetchData("coffee-bean");
-    // console.log(coffeeData.length)
   }, []);
 
   // Define Types of Each Item.

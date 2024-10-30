@@ -59,7 +59,7 @@ const Payment = () => {
         handleAlert();
       }
     } else {
-      console.log("User is not defined or email is missing");
+      
     }
   };
 

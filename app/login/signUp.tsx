@@ -90,14 +90,12 @@ export default function SignUp() {
           router.replace("/home"); // Redirect to the homepage after successful signup
         });
 
-        console.log(userCredential.user.email, userCredential.user.uid);
       }
     } catch (error: any) {
       // Add 'any' type to error for proper typing
       // setError?.(error.message);
       showErrorAlert(error.code);
       setLoading(false);
-      console.log("Error during signup:", error.code, error.message);
     }
   };
 

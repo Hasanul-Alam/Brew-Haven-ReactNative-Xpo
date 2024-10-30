@@ -234,16 +234,13 @@ const Details = () => {
         `https://brew-haven-server.onrender.com/all-coffee/${product._id}`,
         { favourite: !product.favourite }
       );
-      console.log(!product.favourite);
       if (!product.favourite === true && response.data.modifiedCount > 0) {
         handleFavouriteList(data, true);
-        // console.log('add please')
       } else if (
         !product.favourite === false &&
         response.data.modifiedCount > 0
       ) {
         handleFavouriteList(data, false);
-        // console.log('delete please')
       }
     } else {
       const response = await axios.patch(

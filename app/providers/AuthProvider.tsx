@@ -97,8 +97,6 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     return signOut(auth);
   };
 
-  // console.log({ user, login, signup, logout, setUser, error, setError });
-
   return (
     <AuthContext.Provider
       value={{
