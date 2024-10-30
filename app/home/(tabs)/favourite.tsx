@@ -139,7 +139,7 @@ const Favourites = () => {
                                 </View>
                                 <View>
                                   <Text className="color-white bg-black text-sm px-3 py-1 rounded-lg">
-                                    {product.title}
+                                    {product.category}
                                   </Text>
                                 </View>
                               </View>

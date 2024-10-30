@@ -60,6 +60,7 @@ const Cart = () => {
 
   useFocusEffect(
     React.useCallback(() => {
+      setLoading(true);
       const fetchData = async () => {
         if (user && user.email) {
           try {
