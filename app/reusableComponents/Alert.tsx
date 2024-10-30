@@ -5,9 +5,11 @@ import { View, Text, Modal, Animated } from "react-native";
 interface AlertProps {
   isVisible: boolean;
   onClose: () => void;
+  heading: string;
+  message: string;
 }
 
-const Alert: React.FC<AlertProps> = ({ isVisible, onClose }) => {
+const Alert: React.FC<AlertProps> = ({ isVisible, onClose, heading, message }) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   // Trigger animation based on visibility
@@ -51,10 +53,10 @@ const Alert: React.FC<AlertProps> = ({ isVisible, onClose }) => {
           className="bg-white rounded-lg p-6 w-80 shadow-lg"
         >
           <Text className="text-lg font-semibold mb-4 text-center">
-            Item Added to Cart!
+            {heading}
           </Text>
           <Text className="text-gray-600 text-center">
-            Your item has been successfully added to the cart.
+            {message}
           </Text>
         </Animated.View>
       </View>

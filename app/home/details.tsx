@@ -1,6 +1,5 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import {
-  Animated,
   ImageBackground,
   SafeAreaView,
   ScrollView,
@@ -18,7 +17,6 @@ import {
 } from "@expo/vector-icons";
 import axios from "axios";
 import { AuthContext } from "../providers/AuthProvider";
-import { AnimateStyle } from "react-native-reanimated/lib/typescript/Animated";
 import Alert from "../reusableComponents/Alert";
 import LoadingProducts from "../reusableComponents/LoadingProducts";
 
@@ -163,6 +161,7 @@ const Details = () => {
     _id: string;
   }
 
+  // Handle Alert Function
   const handleAlert = () => {
     setAlertVisible(true);
 
@@ -432,6 +431,8 @@ const Details = () => {
             <Alert
               isVisible={alertVisible}
               onClose={() => setAlertVisible(false)}
+              heading='Item Added to Cart!'
+              message='Your item has been successfully added to the cart.'
             />
           </View>
         )}

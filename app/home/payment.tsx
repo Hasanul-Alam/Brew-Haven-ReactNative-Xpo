@@ -12,12 +12,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import axios from "axios";
 import { AuthContext } from "../providers/AuthProvider";
+import Alert from "../reusableComponents/Alert";
 
 const Payment = () => {
   const router = useRouter();
   const { cart } = useLocalSearchParams();
   const { user } = useContext(AuthContext);
-  const [products, setProducts] = useState<CartItem[]>([]);
+  const [alertVisible, setAlertVisible] = useState(false);
 
   const cartItems = typeof cart === "string" ? JSON.parse(cart) : cart || [];
 
@@ -54,7 +55,7 @@ const Payment = () => {
         `https://brew-haven-server.onrender.com/cart/${user.email}`
       );
       if (response.data.deletedCount > 0) {
-        alert("items deleted from cart");
+        handleAlert();
       }
     } else {
       console.log("User is not defined or email is missing");
@@ -64,13 +65,23 @@ const Payment = () => {
   const handlePayment = async () => {
     const data = await makeOrdersData(cartItems);
     if (data) {
-      axios.post("https://brew-haven-server.onrender.com/orders", data).then((res) => {
-        if (res.data.insertedCount) {
-          handleClearCart();
-          // alert("data inserted");
-        }
-      });
+      axios
+        .post("https://brew-haven-server.onrender.com/orders", data)
+        .then((res) => {
+          if (res.data.insertedCount) {
+            handleClearCart();
+          }
+        });
     }
+  };
+
+  const handleAlert = () => {
+    setAlertVisible(true);
+
+    // Auto close the alert after 2.5 seconds
+    setTimeout(() => {
+      setAlertVisible(false);
+    }, 2500);
   };
 
   return (
@@ -225,6 +236,12 @@ const Payment = () => {
               </Text>
             </TouchableOpacity>
           </View>
+          <Alert
+            isVisible={alertVisible}
+            onClose={() => setAlertVisible(false)}
+            heading="Payment Successfull"
+            message="Your payment has been successfully completed."
+          />
         </View>
       </ScrollView>
     </SafeAreaView>
