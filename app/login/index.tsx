@@ -1,11 +1,12 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import { useFocusEffect, useRouter } from "expo-router";
 import { AuthContext } from "../providers/AuthProvider";
 import { UserCredential } from "firebase/auth";
 import LoadingSpinner from "../reusableComponents/LoadingSpinner";
 import LoginSignUpButton from "../reusableComponents/LoginSignUpButton";
 import useAsyncStorage from "../hooks/useAsyncStorage";
+import LoginSignUpAlert from "../reusableComponents/LoginSignUpAlert";
 // import AsyncStorage, { useAsyncStorage } from "@react-native-async-storage/async-storage";
 
 export default function Login() {
@@ -13,9 +14,21 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [errorVisible, setErrorVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const { loadData, saveData } = useAsyncStorage("user");
   const router = useRouter();
+
+  // Function to show an error alert
+  const showErrorAlert = (errorCode: any) => {
+    setError(errorCode);
+    setErrorVisible(true);
+  };
+
+  // Close Error Alert
+  const handleCloseAlert = () => {
+    setErrorVisible(false);
+  };
 
   const handleLogin = async () => {
     setLoading(true);
@@ -40,7 +53,8 @@ export default function Login() {
       }
     } catch (error: any) {
       // Add 'any' type to error for proper typing
-      setError?.(error.message);
+      // setError?.(error.message);
+      showErrorAlert(error.code);
       setLoading(false);
       console.log("Error during signup:", error.code, error.message);
     }
@@ -62,11 +76,7 @@ export default function Login() {
   useFocusEffect(
     useCallback(() => {
       fetchDataFromStorage();
-      
-      // Optionally, if you need to clean up when the screen loses focus
-      return () => {
-        // Cleanup code if needed
-      };
+      return () => {};
     }, [])
   );
 
@@ -115,6 +125,13 @@ export default function Login() {
           </View>
         </View>
       )}
+
+      {/* Error Alert */}
+      <LoginSignUpAlert
+        visible={errorVisible}
+        code={error}
+        onClose={handleCloseAlert}
+      />
     </View>
   );
 }
