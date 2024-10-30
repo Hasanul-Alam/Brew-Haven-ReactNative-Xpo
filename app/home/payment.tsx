@@ -35,12 +35,13 @@ const Payment = () => {
     date: string; // or Date if you're using Date objects
   }
 
+  interface User {
+    photoURL?: string; // photoURL might be undefined
+  }
+
   const makeOrdersData = (items: Item[]) => {
     const currentDate = new Date();
     const formattedDate = currentDate.toDateString();
-    const totalAmount = cartItems.reduce((accumulator: number, item: any) => {
-      return accumulator + item.price * item.quantity;
-    }, 0);
     const itemsWithDate = items.map(({ _id, ...rest }) => ({
       ...rest,
       date: formattedDate,
@@ -84,6 +85,8 @@ const Payment = () => {
     }, 2500);
   };
 
+  
+
   return (
     <SafeAreaView className="bg-[#0C0F14] flex-1">
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
@@ -114,7 +117,7 @@ const Payment = () => {
                   <Image
                     className="w-full h-full rounded-xl"
                     source={{
-                      uri: "https://i.ibb.co.com/jGMVDW2/coffee-shop.jpg",
+                      uri: (user as User)?.photoURL || 'https://i.ibb.co.com/BzzqKTm/images.png',
                     }}
                   />
                 </View>

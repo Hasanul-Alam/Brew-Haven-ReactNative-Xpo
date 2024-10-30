@@ -81,6 +81,7 @@ const Details = () => {
   };
 
   // Interface for typescript
+  /* Product Details Interface */
   interface ProductDetails {
     description: string;
     name: string;
@@ -92,8 +93,10 @@ const Details = () => {
     price: number;
     title: string;
     favourite: boolean;
+    _id: string;
   }
 
+  /* User Interface */
   interface User {
     email: string;
   }
@@ -156,11 +159,6 @@ const Details = () => {
   const sizesToMap =
     productCategory === "Beverages" ? coffeeSizes : coffeeBeanSizes;
 
-  // Using interface to get rid off typescript error.
-  interface ProductDetails {
-    _id: string;
-  }
-
   // Handle Alert Function
   const handleAlert = () => {
     setAlertVisible(true);
@@ -204,14 +202,14 @@ const Details = () => {
         data
       );
       if (response.data.insertedId) {
-        alert("Favourite inserted");
+        // alert("Favourite inserted");
       }
     } else {
       const response = await axios.delete(
         `https://brew-haven-server.onrender.com/favourite/${data.id}`
       );
       if (response.data.deletedCount > 0) {
-        alert("deleted successfully from favourite list");
+        // alert("deleted successfully from favourite list");
       }
     }
   };
@@ -431,8 +429,8 @@ const Details = () => {
             <Alert
               isVisible={alertVisible}
               onClose={() => setAlertVisible(false)}
-              heading='Item Added to Cart!'
-              message='Your item has been successfully added to the cart.'
+              heading="Item Added to Cart!"
+              message="Your item has been successfully added to the cart."
             />
           </View>
         )}

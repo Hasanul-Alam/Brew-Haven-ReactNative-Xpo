@@ -1,5 +1,4 @@
 import {
-  Image,
   ImageBackground,
   SafeAreaView,
   ScrollView,
@@ -7,13 +6,11 @@ import {
   Text,
   View,
 } from "react-native";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   AntDesign,
   Feather,
-  Ionicons,
   MaterialIcons,
-  Octicons,
 } from "@expo/vector-icons";
 import PageHeader from "@/app/reusableComponents/PageHeader";
 import { AuthContext } from "@/app/providers/AuthProvider";
@@ -52,7 +49,8 @@ const Favourites = () => {
     }, [user])
   );
 
-  // Interface for typescript error
+  // Interfaces for typescript error
+  /* Product Details Interface */
   interface ProductDetails {
     _id?: string;
     name: string;
