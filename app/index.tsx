@@ -1,26 +1,34 @@
 import React, { useEffect, useState } from "react";
 import { Redirect } from "expo-router";
-import { View, Text, ActivityIndicator } from "react-native";
+import { View } from "react-native";
 import LoadingSpinner from "./reusableComponents/LoadingSpinner";
-import LoadingProducts from "./reusableComponents/LoadingProducts";
+import * as SplashScreen from "expo-splash-screen";
+
+SplashScreen.preventAutoHideAsync();
 
 export default function Index() {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   useEffect(() => {
-    // Simulating fetching login status from storage or API
-    const checkLoginStatus = async () => {
-      // Simulated delay (replace with your actual login check logic)
-      setTimeout(() => {
-        // Assume no user is logged in for now (update this logic)
-        const loggedIn = false; // e.g., check AsyncStorage or Firebase Auth
-        setIsLoggedIn(loggedIn);
-        setIsLoading(false);
-      }, 1000);
+    const hideSplashScreen = async () => {
+      // Wait for 2 seconds before checking login status
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await SplashScreen.hideAsync();
+
+      // Simulate fetching login status from storage or API
+      const checkLoginStatus = async () => {
+        setTimeout(() => {
+          const loggedIn = false;
+          setIsLoggedIn(loggedIn);
+          setIsLoading(false);
+        }, 1000);
+      };
+
+      checkLoginStatus();
     };
 
-    checkLoginStatus();
+    hideSplashScreen();
   }, []);
 
   return (
