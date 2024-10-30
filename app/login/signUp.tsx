@@ -15,6 +15,7 @@ import LoginSignUpButton from "../reusableComponents/LoginSignUpButton";
 import useAsyncStorage from "../hooks/useAsyncStorage";
 import * as ImagePicker from "expo-image-picker";
 import axios from "axios";
+import LoginSignUpAlert from "../reusableComponents/LoginSignUpAlert";
 
 export default function SignUp() {
   const [name, setName] = useState("");
@@ -27,6 +28,23 @@ export default function SignUp() {
     useContext(AuthContext);
   const [uploading, setUploading] = useState<boolean>(false);
   const [imageBase64, setImageBase64] = useState<any | null>(null);
+
+
+  const [errorCode, setErrorCode] = useState("");
+  const [errorVisible, setErrorVisible] = useState(false);
+
+
+  // Function to show an error alert
+  const showErrorAlert = (errorCode: any) => {
+    setErrorCode(errorCode);
+    setErrorVisible(true);
+  };
+
+  // Close Error Alert
+  const handleCloseAlert = () => {
+    setErrorVisible(false);
+  };
+  
 
   // Handle sign up
   const handleSignUp = async () => {
@@ -76,7 +94,8 @@ export default function SignUp() {
       }
     } catch (error: any) {
       // Add 'any' type to error for proper typing
-      setError?.(error.message);
+      // setError?.(error.message);
+      showErrorAlert(error.code);
       setLoading(false);
       console.log("Error during signup:", error.code, error.message);
     }
@@ -200,6 +219,13 @@ export default function SignUp() {
           </View>
         </View>
       )}
+
+      {/* Error Alert */}
+      <LoginSignUpAlert
+        visible={errorVisible}
+        code={errorCode}
+        onClose={handleCloseAlert}
+      />
     </View>
   );
 }

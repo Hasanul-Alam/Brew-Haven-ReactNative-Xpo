@@ -7,13 +7,8 @@ interface AlertProps {
   onClose: () => void;
 }
 
-const LoginSignUpAlert: React.FC<AlertProps> = ({
-  visible,
-  code,
-  onClose,
-}) => {
-
-  let errorMessage = '';
+const LoginSignUpAlert: React.FC<AlertProps> = ({ visible, code, onClose }) => {
+  let errorMessage = "";
 
   // Handele error using switch
   switch (code) {
@@ -40,6 +35,12 @@ const LoginSignUpAlert: React.FC<AlertProps> = ({
       break;
     case "auth/network-request-failed":
       errorMessage = "Network error. Please check your connection.";
+      break;
+    case "auth/email-already-in-use":
+      errorMessage = "This email address is already in use.";
+      break;
+    case "auth/weak-password":
+      errorMessage = "Your password must be at least 6 characters long.";
       break;
     default:
       errorMessage = "An unexpected error occurred.";
